@@ -1,0 +1,232 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+
+<dom-module id="pinnackl-app">
+  <template>
+    <style include="app-grid-style">
+      :host {
+        --app-primary-color: #179BD7;
+        --app-secondary-color: black;
+
+        display: block;
+
+        --app-grid-columns: 3;
+        --app-grid-item-height: 100px;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      iron-pages {
+        height: 90vh;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+
+        padding: 0 16px;
+
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+
+        font-weight: bold;
+      }
+
+      .end {
+        background-color: #f8f8f8;
+      }
+
+      .footer {
+        height: 40vh;
+      }
+
+      .right {
+        text-align: center;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 24px;
+        color: #757575;
+      }
+
+      .item .footer-cln-header {
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 24px;
+        color: #179BD7;
+      }
+
+      .item ul, .item li {
+        list-style: none;
+      }
+
+      .item li a {
+        color: #757575;
+        font-size: 12px;
+        text-decoration: none;
+        line-height: 24px;
+      }
+
+      .item li .github {
+        vertical-align: middle;
+        width: 2em;
+        height: 2em;
+      }
+
+      .item li .social {
+        line-height: 24px;
+      }
+
+    </style>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <app-drawer-layout fullbleed force-narrow>
+      <!-- Drawer content -->
+      <app-drawer id="appDrawer" swipe-open>
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="home" href="/home">Home</a>
+          <a name="projects" href="/projects">Projects</a>
+          <a name="about" href="/about">About</a>
+        </iron-selector>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout>
+
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>Pinnackl</div>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            fallback-selection="view404"
+            role="main">
+          <pinnackl-home name="home"></pinnackl-home>
+          <my-view404 name="view404"></my-view404>
+        </iron-pages>
+        <div class="end footer">
+          <div class="app-grid">
+            <div class="item">
+              <ul>
+                <div class="footer-cln-header">Projects</div>
+                <li><a href="/projects/pinnackl-press" title="Pinnackl Press">Pinnackl Press</a></li>
+                <li><a href="/projects/backdrop" title="Pinnackl Press">Pinnackl Press</a></li>
+                <li><a href="/projects/ok-mom" title="OK Mom">OK Mom</a></li>
+              </ul>
+            </div>
+            <div class="item">
+              <ul>
+                <div class="footer-cln-header">About</div>
+                <li><a href="/about" title="About Pinnackl">About Pinnackl</a></li>
+              </ul>
+            </div>
+            <div class="item">
+              <ul>
+                <li>
+                  <div class="footer-cln-header">Find us</div>
+                  <div class="social">
+                    <a href="https://github.com/pinnackl" title="Github">
+                      <iron-image class="github" src="/images/github.svg" preload sizing="cover"></iron-image>
+                      <span>Github</span>
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="end right">Pinnackl@{{year}}</div>
+      </app-header-layout>
+    </app-drawer-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'pinnackl-app',
+
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
+        year: {
+          type: String,
+          value: function () {
+            var d = new Date();
+            return d.getFullYear();
+          }
+        }
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+
+      _routePageChanged: function(page) {
+        this.page = page || 'home';
+        // Force the drawer to close
+        this.$.appDrawer.opened = false;
+      },
+
+      _pageChanged: function(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('pinnackl-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function() {
+        this.page = 'view404';
+      }
+    });
+  </script>
+</dom-module>
