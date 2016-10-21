@@ -45,6 +45,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --paper-icon-button-ink-color: white;
       }
 
+      .logo::after {
+        display: inline-block;
+      }
+
+      .logo {
+        display: inline-block;
+        width: 100px;
+        height: 64px;
+      }
+
       iron-pages {
         height: 90vh;
       }
@@ -140,7 +150,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div main-title>Pinnackl</div>
+            <div>
+              <a class="logo" main-title href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" preload sizing="contain"></iron-image></a>
+            </div>
           </app-toolbar>
         </app-header>
 
@@ -150,6 +162,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="view404"
             role="main">
           <pinnackl-home name="home"></pinnackl-home>
+          <pinnackl-projects name="projects"></pinnackl-projects>
+          <pinnackl-about name="about"></pinnackl-about>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
         <div class="end footer">
