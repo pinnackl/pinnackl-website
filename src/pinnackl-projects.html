@@ -8,11 +8,41 @@
 				display: block;
 			}
 		</style>
-		Projects
+	    <app-route
+	        route="{{route}}"
+	        pattern="/:project"
+	        data="{{routeData}}"></app-route>
+		<div class="card">
+			<h1>Project [[_ucfirst(project)]]</h1>
+		</div>
 	</template>
 	<script>
 		Polymer({
-			is: 'pinnackl-projects'
+			is: 'pinnackl-projects',
+
+			properties: {
+
+				route: {
+					type: Object
+				},
+
+				routeData: {
+					type: Object
+				}
+
+			},
+
+	      	observers: [
+				'_routeProjectChanged(routeData.project)'
+	     	],
+
+			_routeProjectChanged: function (project) {
+				this.project = project;
+			},
+
+			_ucfirst: function (string) {
+				return string.charAt(0).toUpperCase() + string.slice(1);
+			}
 		});
 	</script>
 </dom-module>
