@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="shared-styles.html">
 
+<link rel="import" href="../bower_components/polymer-quill/polymer-quill.html">
+
 <dom-module id="pinnackl-projects">
 	<template>
 		<style include="shared-styles">
@@ -14,6 +16,14 @@
 	        data="{{routeData}}"></app-route>
 		<div class="card">
 			<h1>Project [[_ucfirst(project)]]</h1>
+
+		<style is="custom-style">
+		  polymer-quill.full {
+		    --polymer-quill-editor-height: 150px;
+		  }
+		</style>
+		<polymer-quill id="demo1" content="[[project]]" class="full" store-as="html" save-interval="1000" toolbar-type="full">
+		</polymer-quill>
 		</div>
 	</template>
 	<script>
