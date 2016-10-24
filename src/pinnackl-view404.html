@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<dom-module id="my-view404">
+<dom-module id="pinnackl-view404">
   <template>
     <style>
       :host {
@@ -20,12 +20,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    Oops you hit a 404. <a href="/">Head back to home.</a>
+    <div class="card material">
+      Oops you hit a 404. <a href="/">Head back to home.</a>
+    </div>
   </template>
 
   <script>
     Polymer({
-      is: 'my-view404'
+      is: 'pinnackl-view404'
     });
   </script>
 </dom-module>
