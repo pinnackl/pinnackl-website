@@ -3,3 +3,4 @@ build/
 node_modules/
 *.sublime-project
 *.sublime-workspace
+pinnackl-firebase.html
