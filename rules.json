@@ -3,7 +3,11 @@
     ".read": false,
     ".write": false,
     "projects": {
-    	".read": true,
+      ".read": true,
+      ".write": "(root.child('administrators').hasChild(auth.uid))"
+    },
+    "pages": {
+      ".read": true,
       ".write": "(root.child('administrators').hasChild(auth.uid))"
     },
     "administrators": {

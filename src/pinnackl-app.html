@@ -27,6 +27,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/github-project-card/github-project-card.html">
+<link rel="import" href="../bower_components/import-tinymce/import-tinymce.html">
+<link rel="import" href="../bower_components/polymer-tinymce/polymer-tinymce.html">
 
 <!-- Custom element -->
 <link rel="import" href="pinnackl-firebase.html">
@@ -190,7 +193,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main">
           <pinnackl-home name="home"></pinnackl-home>
           <pinnackl-projects name="projects" route="{{subroute}}" user="{{user}}"></pinnackl-projects>
-          <pinnackl-about name="about"></pinnackl-about>
+          <pinnackl-about name="about" user="{{user}}"></pinnackl-about>
           <pinnackl-view404 name="view404"></pinnackl-view404>
         </iron-pages>
         <div class="end footer">

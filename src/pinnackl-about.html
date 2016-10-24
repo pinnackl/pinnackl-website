@@ -7,12 +7,189 @@
 			:host {
 				display: block;
 			}
+
+            .save-button {
+            	background-color: #179BD7;
+            	color: #FFFFFF;
+            }
 		</style>
-		About
+        <firebase-document
+            path="/administrators"
+            data="{{rights}}">
+        </firebase-document>
+
+        <div class="card material">
+			<firebase-document
+				path="/pages/about"
+				data="{{pageData}}">
+			</firebase-document>
+			<div class="section-header">
+				<h2>[[_ucfirst(pageData.name)]]</h2>
+				<template is="dom-if" if={{isAdmin}}>
+					<paper-icon-button icon="create" raised on-tap="edit"
+						hidden$="[[editMode]]"></paper-icon-button>
+					<paper-icon-button icon="close" raised on-tap="close"
+						hidden$="[[!editMode]]"></paper-icon-button>
+				</template>
+			</div>
+			<div id="pageDescription"></div>
+			<!-- Edit content -->
+			<template is="dom-if" if={{editMode}}>
+				<div class="edit">
+					<div class="section-header">
+						<paper-input
+							id="nameValue"
+							label="Page title"
+							value="{{editData.name}}"></paper-input>
+						<paper-button
+							class="save-button"
+							raised
+							on-tap="update">
+							<iron-icon icon="done"></iron-icon>UPDATE</paper-button>
+					</div>
+				</div>
+			</template>
+			<polymer-tinymce id="editor"
+				hidden$="[[!editMode]]"
+				tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image" 
+				tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]'
+			></polymer-tinymce>
+        </div>
+        <paper-toast
+        	id="stateMessage"
+        	horizontal-align="right"
+        	always-on-top duration="3000"
+        	text=""
+        	on-iron-overlay-closed="_toastClosed">
+            <iron-icon class="validate-icon" icon="check-circle"></iron-icon>
+        </paper-toast>
 	</template>
 	<script>
 		Polymer({
-			is: 'pinnackl-about'
+			is: 'pinnackl-about',
+
+			properties: {
+				
+				pageData: {
+					type: Object,
+					observer: '_dataChanded'
+				},
+
+				user: {
+					type: Object,
+					observer: '_userChanged'
+				},
+
+				rights: {
+					type: Object
+				},
+
+				isAdmin: {
+					type: Boolean,
+					value: false
+				},
+
+				contentReady: {
+					type: Boolean,
+					value: false
+				},
+
+				editMode: {
+					type: Boolean,
+					value: false
+				},
+
+                isUpdate: {
+                    type: Boolean,
+                    value: false
+                },
+			},
+
+	      	observers: [
+				'checkRights(user.uid, rights)',
+				'_pageDataChanged(pageData.content)',
+	     	],
+
+	     	ready: function () {
+	     	},
+
+	     	checkRights: function (uid, profile) {
+                if (profile && profile[uid]) {
+                	this.isAdmin = true;
+                }
+	     	},
+
+	     	edit: function (e) {
+	     		this.editMode = true;
+	     	},
+
+	     	close: function (e) {
+	     		this.editMode = false;
+	     	},
+
+	     	update: function () {
+     			this.set('pageData', {
+					name: this.editData.name || 'Lorem',
+					content: this.$.editor.getContent() || 'Lorem'
+				});
+				this.isUpdate = true;
+				this.$.stateMessage.text = "Content successfully updated!";
+	     	},
+
+			_dataChanded: function (data) {
+                if (data && this.isUpdate) {
+                    this.$.stateMessage.open();
+                    this.isUpdate = false;
+                }
+			},
+
+			_toastClosed: function () {
+			},
+
+			_pageDataChanged: function (content) {
+				this.editData = {};
+				this.contentReady = false;
+				this.editMode = false;
+
+				// Set HTML content
+				this.$.pageDescription.innerHTML = content || '';
+
+				if (typeof content != 'undefined') {
+					// Set edito value
+					this.set('editData', {
+						name: this.pageData.name || '',
+						content: this.pageData.content || ''
+					});
+					this.$.editor.setContent(this.editData.content);
+				}
+				if (content) {
+					this.contentReady = true;
+				}
+			},
+
+
+			_userChanged: function (user) {
+				if (user == null) {
+					this.isAdmin = false;
+					this.editMode = false;
+				} else {
+					this.checkRights(user.uid, this.profile);
+				}
+			},
+
+			_ucfirst: function (string) {
+				if (string) {
+					return string.charAt(0).toUpperCase() + string.slice(1);
+				}
+				return '';
+			},
+
+			_toLowerCase: function (string) {
+				if (string) {
+					return string.toLowerCase();
+				}
+				return '';
+			},
 		});
 	</script>
 </dom-module>
