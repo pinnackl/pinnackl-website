@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "projects": {
+    	".read": true,
+      ".write": "(root.child('administrators').hasChild(auth.uid))"
+    },
+    "administrators": {
+      ".read": "(auth != null)"
+    }
+  }
+}
