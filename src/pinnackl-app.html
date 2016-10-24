@@ -30,6 +30,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/github-project-card/github-project-card.html">
 <link rel="import" href="../bower_components/import-tinymce/import-tinymce.html">
 <link rel="import" href="../bower_components/polymer-tinymce/polymer-tinymce.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
 
 <!-- Custom element -->
 <link rel="import" href="pinnackl-firebase.html">
@@ -142,6 +147,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         line-height: 24px;
       }
 
+      .circle {
+        border-radius: 50%;
+      }
+
     </style>
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -157,6 +166,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       provider="google"
       on-error="handleError">
     </firebase-auth>
+
+    <page-title base-title="Pinnackl" title="[[_ucfirst(page)]]"></page-title>
+
+    <iron-media-query query="(min-width: 600px)" query-matches="{{queryMatches}}"></iron-media-query>
 
     <app-drawer-layout fullbleed force-narrow>
       <!-- Drawer content -->
@@ -178,10 +191,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" preload sizing="contain"></iron-image></a>
             <div main-title>[[_ucfirst(page)]]</div>
             <div class="login">
-              <span class="avatar" hidden$="{{!user.email}}"><img src="{{user.photoURL}}" alt=""></span>
-              <span>[[user.displayName]]</span>
-              <paper-button hidden$="{{user.email}}" on-tap="login">Login</paper-button>
-              <paper-button hidden$="{{!user.email}}" on-tap="logout">Logout</paper-button>
+              <span class="mobile">
+                <paper-menu-button horizontal-align="right">
+                  <paper-icon-button src="{{user.photoURL}}" class="dropdown-trigger" hidden$="{{!user.email}}"></paper-icon-button>
+                  <paper-icon-button icon="face" class="dropdown-trigger" hidden$="{{user.email}}"></paper-icon-button>
+                  <paper-menu class="dropdown-content">
+                    <paper-item hidden$="{{!user.email}}">[[user.displayName]]</paper-item>
+                    <paper-item hidden$="{{user.email}}">
+                      <paper-button hidden$="{{user.email}}" on-tap="login">Login</paper-button>
+                    </paper-item>
+                    <paper-item hidden$="{{!user.email}}">
+                      <paper-button hidden$="{{!user.email}}" on-tap="logout">Logout</paper-button>
+                    </paper-item>
+                  </paper-menu>
+                </paper-menu-button>
+              </span>
+              <span class="desktop" hidden$="[[!queryMatches]]">
+                <span class="avatar" hidden$="{{!user.email}}"><img src="{{user.photoURL}}" alt=""></span>
+                <span>[[user.displayName]]</span>
+                <paper-button hidden$="{{user.email}}" on-tap="login">Login</paper-button>
+                <paper-button hidden$="{{!user.email}}" on-tap="logout">Logout</paper-button>
+              </span>
             </div>
           </app-toolbar>
         </app-header>
