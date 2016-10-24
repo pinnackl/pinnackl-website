@@ -1,30 +1,209 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/github-project-card/github-project-card.html">
+<link rel="import" href="../bower_components/import-tinymce/import-tinymce.html">
+<link rel="import" href="../bower_components/polymer-tinymce/polymer-tinymce.html">
 
-<link rel="import" href="../bower_components/polymer-quill/polymer-quill.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="pinnackl-projects">
 	<template>
-		<style include="shared-styles">
+		<style include="shared-styles app-grid-style">
 			:host {
 				display: block;
+
+				--app-grid-columns: 3;
+        		--app-grid-item-height: 200px;
 			}
+
+			a {
+				text-decoration: none;
+				color: #757575;
+				display: block;
+			}
+
+			a.project-link {
+				text-align: center;
+			}
+
+			.gh-card {
+				display: inline-block;
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+			}
+
+			polymer-quill.full {
+				--polymer-quill-editor-height: 50vh;
+			}
+
+            .section-header {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                margin-bottom: 1em;
+                align-items: center;
+            }
+
+            .description {
+            	margin-bottom: 1em;
+            }
+
+            .save-button {
+            	background-color: #179BD7;
+            	color: #FFFFFF;
+            }
 		</style>
 	    <app-route
 	        route="{{route}}"
-	        pattern="/:project"
-	        data="{{routeData}}"></app-route>
-		<div class="card">
-			<h1>Project [[_ucfirst(project)]]</h1>
+	        pattern="/:page"
+	        data="{{routeData}}"
+	        tail="{{subroute}}"></app-route>
+	    <app-route 
+	    	route="{{subroute}}"
+	    	pattern="/:project"
+	    	data="{{subRouteData}}"></app-route>
 
-		<style is="custom-style">
-		  polymer-quill.full {
-		    --polymer-quill-editor-height: 150px;
-		  }
-		</style>
-		<polymer-quill id="demo1" content="[[project]]" class="full" store-as="html" save-interval="1000" toolbar-type="full">
-		</polymer-quill>
-		</div>
+        <firebase-document
+            path="/administrators"
+            data="{{rights}}">
+        </firebase-document>
+
+		<iron-pages id="pager" selected="[[page]]" attr-for-selected="name" fallback-selection="view404" on-iron-select="pageSelected">
+			<section name="list">
+				<div class="card material">
+					<firebase-query
+						id="query"
+						path="/projects"
+						data="{{data}}">
+					</firebase-query>
+					<div class="section-header">
+						<h1>Projects :</h1>
+						<template is="dom-if" if={{isAdmin}}>
+							<a href="/projects/create" title="Create project">
+								<paper-icon-button icon="add"></paper-icon-button>
+							</a>
+						</template>
+					</div>
+					<div class="app-grid">
+						<template is="dom-repeat" items={{data}} as=item index-as=index>
+							<div class="item">
+								<a class="project-link" href="/projects/detail/[[item.github]]" title="[[item.name]]">
+									<div class="card material">
+										<h2>[[item.name]]</h2>
+									</div>
+								</a>
+							</div>
+						</template>
+					</div>
+				</div>
+			</section>
+			<section name="detail">
+				<div class="card material">
+					<div class="description">
+						<firebase-document
+							path="/projects/[[project]]"
+							data="{{projectData}}">
+						</firebase-document>
+						<div class="section-header">
+							<h2>Project : [[_ucfirst(projectData.name)]]</h2>
+							<template is="dom-if" if={{isAdmin}}>
+								<paper-icon-button icon="create" raised on-tap="edit"
+									hidden$="[[editMode]]"></paper-icon-button>
+								<paper-icon-button icon="close" raised on-tap="close"
+									hidden$="[[!editMode]]"></paper-icon-button>
+							</template>
+						</div>
+						<div id="projectDescription"></div>
+						<!-- Edit content -->
+						<template is="dom-if" if={{contentReady}}>
+							<template is="dom-if" if={{editMode}}>
+								<div class="edit">
+									<div class="section-header">
+										<paper-input
+											id="nameValue"
+											label="Project name"
+											value="{{editData.name}}"></paper-input>
+										<paper-button
+											class="save-button"
+											raised
+											on-tap="update">
+											<iron-icon icon="done"></iron-icon>UPDATE</paper-button>
+									</div>
+									<div class="section-header">
+										<paper-input 
+											id="githubValue"
+											label="Github name"
+											value="{{editData.github}}"></paper-input>
+									</div>
+									<button type="button" on-tap="reset">RESET</button>
+								</div>
+							</template>
+						</template>
+						<polymer-tinymce id="editor"
+							hidden$="[[!editMode]]"
+							tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image" 
+							tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]'
+						></polymer-tinymce>
+					</div>
+					<div class="gh-card">
+						<template is="dom-if" if={{contentReady}}>
+							<github-project-card
+								user="pinnackl"
+								project$="[[projectData.github]]">
+							</github-project-card>
+						</template>
+					</div>
+				</div>
+			</section>
+			<section name="create">
+				<firebase-document
+					path="/projects"
+					data="{{newProjectData}}">
+				</firebase-document>
+				<div class="card material">
+					<template is="dom-if" if={{isAdmin}}>
+						<h2>Create project</h2>
+						<!-- Edit content -->
+						<template is="dom-if" if={{editMode}}>
+							<div class="edit">
+								<div class="section-header">
+									<paper-input
+										id="nameValue"
+										label="Project name"
+										value="{{editData.name}}"></paper-input>
+									<paper-button
+										class="save-button"
+										raised
+										on-tap="create">
+										<iron-icon icon="done"></iron-icon>CREATE</paper-button>
+								</div>
+								<div class="section-header">
+									<paper-input 
+										id="githubValue"
+										label="Github name"
+										value="{{editData.github}}"></paper-input>
+								</div>
+							</div>
+						</template>
+					</template>
+					<polymer-tinymce id="creator"
+						hidden$="[[!editMode]]"
+						tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image" 
+						tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]'
+					></polymer-tinymce>
+				</div>
+				<template is="dom-if" if={{!isAdmin}}>
+					<pinnackl-view404 name="view404"></pinnackl-view404>
+				</template>
+			</section>
+			<pinnackl-view404 name="view404"></pinnackl-view404>
+		</iron-pages>
+        <paper-toast
+        	id="stateMessage"
+        	horizontal-align="right"
+        	always-on-top duration="3000"
+        	text=""
+        	on-iron-overlay-closed="_toastClosed">
+            <iron-icon class="validate-icon" icon="check-circle"></iron-icon>
+        </paper-toast>
 	</template>
 	<script>
 		Polymer({
@@ -38,21 +217,179 @@
 
 				routeData: {
 					type: Object
-				}
+				},
+
+				data: {
+					type: Array
+				},
+
+				projectData: {
+					type: Object
+				},
+
+				newProjectData: {
+					type: Object,
+					observer: '_dataChanded'
+				},
+
+				user: {
+					type: Object,
+					observer: '_userChanged'
+				},
+
+				rights: {
+					type: Object
+				},
+
+				isAdmin: {
+					type: Boolean,
+					value: false
+				},
+
+				contentReady: {
+					type: Boolean,
+					value: false
+				},
+
+				editMode: {
+					type: Boolean,
+					value: false
+				},
+
+                isUpdate: {
+                    type: Boolean,
+                    value: false
+                },
 
 			},
 
 	      	observers: [
-				'_routeProjectChanged(routeData.project)'
+				'checkRights(user.uid, rights)',
+				'_routePageChanged(routeData.page)',
+				'_routeProjectChanged(subRouteData.project)',
+				'_projectDataChanged(projectData.description)',
 	     	],
+
+	     	ready: function () {
+	     	},
+
+	     	checkRights: function (uid, profile) {
+                if (profile && profile[uid]) {
+                	this.isAdmin = true;
+                }
+	     	},
+
+	     	edit: function (e) {
+	     		this.editMode = true;
+	     	},
+
+	     	close: function (e) {
+	     		this.editMode = false;
+	     	},
+
+	     	create: function () {
+				this.set('newProjectData.' + this._toLowerCase(this.editData.github), {
+					name: this.editData.name || 'Lorem',
+					github: this._toLowerCase(this.editData.github || 'Lorem'),
+					description: this.$.creator.getContent() || 'Lorem'
+				});
+				this.isUpdate = true;
+				this.$.stateMessage.text = "Content successfully created!";
+	     	},
+
+	     	update: function () {
+				this.set('projectData', {
+					name: this.editData.name || 'Lorem',
+					github: this._toLowerCase(this.editData.github || 'Lorem'),
+					description: this.$.editor.getContent() || 'Lorem'
+				});
+				this.isUpdate = true;
+				this.$.stateMessage.text = "Content successfully updated!";
+	     	},
+
+	     	pageSelected: function (e, detail) {
+	     		if (this.$.pager.selected == 'view404') {
+			        // Load page import on demand. Show 404 page if fails
+			        var resolvedPageUrl = this.resolveUrl('pinnackl-' + this.$.pager.selected + '.html');
+			        this.importHref(resolvedPageUrl, null, null, true);
+	     		}
+	     	},
+
+			_routePageChanged: function (page) {
+				this.page = page || 'list';
+				this.editData = {
+					name: null,
+					github: null,
+					description: null
+				};
+				this.checkRights(this.user.uid, this.rights);
+				if (this.isAdmin && this.page == 'create') {
+					this.editMode = true;
+				}
+			},
 
 			_routeProjectChanged: function (project) {
 				this.project = project;
 			},
 
+			_projectDataChanged: function (description) {
+				this.editData = {};
+				this.contentReady = false;
+				this.editMode = false;
+
+				// Set HTML content
+				this.$.projectDescription.innerHTML = description || '';
+
+				if (typeof description != 'undefined') {
+					console.log(this.projectData.description);
+					// Set edito value
+					this.set('editData', {
+						name: this.projectData.name || '',
+						github: this.projectData.github || '',
+						description: this.projectData.description || ''
+					});
+					this.$.editor.setContent(this.editData.description);
+				}
+				if (description) {
+					this.contentReady = true;
+				}
+			},
+
+			_dataChanded: function (data) {
+                if (data && this.isUpdate) {
+                    this.$.stateMessage.open();
+                    this.isUpdate = false;
+                }
+			},
+
+			_toastClosed: function () {
+				if (this.page == "create") {
+					window.location.href = "/projects/detail/" + this._toLowerCase(this.editData.github);
+				}
+			},
+
+			_userChanged: function (user) {
+				if (user == null) {
+					this.isAdmin = false;
+					this.editMode = false;
+				} else {
+					this.checkRights(user.uid, this.profile);
+				}
+			},
+
 			_ucfirst: function (string) {
-				return string.charAt(0).toUpperCase() + string.slice(1);
-			}
+				if (string) {
+					return string.charAt(0).toUpperCase() + string.slice(1);
+				}
+				return '';
+			},
+
+			_toLowerCase: function (string) {
+				if (string) {
+					return string.toLowerCase();
+				}
+				return '';
+			},
 		});
 	</script>
 </dom-module>

@@ -23,6 +23,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
+<!-- Custom element -->
+<link rel="import" href="pinnackl-firebase.html">
 
 <dom-module id="pinnackl-app">
   <template>
@@ -55,8 +62,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 64px;
       }
 
+      .avatar, .avatar img {
+        width: 48px;
+        height: 48px;
+        border-radius: 100%;
+        vertical-align: middle;
+      }
+
       iron-pages {
-        height: 90vh;
+        min-height: 90vh;
       }
 
       .drawer-list {
@@ -133,13 +147,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
+    <pinnackl-firebase></pinnackl-firebase>
+    <firebase-auth
+      id="auth"
+      user="{{user}}"
+      provider="google"
+      on-error="handleError">
+    </firebase-auth>
+
     <app-drawer-layout fullbleed force-narrow>
       <!-- Drawer content -->
       <app-drawer id="appDrawer" swipe-open>
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="home" href="/home">Home</a>
-          <a name="projects" href="/projects">Projects</a>
+          <a name="projects" href="/projects/list">Projects</a>
           <a name="about" href="/about">About</a>
         </iron-selector>
       </app-drawer>
@@ -150,8 +172,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div>
-              <a class="logo" main-title href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" preload sizing="contain"></iron-image></a>
+            <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" preload sizing="contain"></iron-image></a>
+            <div main-title>[[_ucfirst(page)]]</div>
+            <div class="login">
+              <span class="avatar" hidden$="{{!user.email}}"><img src="{{user.photoURL}}" alt=""></span>
+              <span>[[user.displayName]]</span>
+              <paper-button hidden$="{{user.email}}" on-tap="login">Login</paper-button>
+              <paper-button hidden$="{{!user.email}}" on-tap="logout">Logout</paper-button>
             </div>
           </app-toolbar>
         </app-header>
@@ -162,9 +189,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="view404"
             role="main">
           <pinnackl-home name="home"></pinnackl-home>
-          <pinnackl-projects name="projects" route="{{subroute}}"></pinnackl-projects>
+          <pinnackl-projects name="projects" route="{{subroute}}" user="{{user}}"></pinnackl-projects>
           <pinnackl-about name="about"></pinnackl-about>
-          <my-view404 name="view404"></my-view404>
+          <pinnackl-view404 name="view404"></pinnackl-view404>
         </iron-pages>
         <div class="end footer">
           <div class="app-grid">
@@ -226,6 +253,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '_routePageChanged(routeData.page)'
       ],
 
+      login: function () {
+        this.$.auth.signInWithPopup('google');
+      },
+
+      logout: function () {
+        this.$.auth.signOut();
+      },
+
+      handleError: function (error) {
+        console.log(error);
+      },
+
       _routePageChanged: function(page) {
         this.page = page || 'home';
         // Force the drawer to close
@@ -240,6 +279,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _showPage404: function() {
         this.page = 'view404';
+      },
+
+      _ucfirst: function (string) {
+        if (string) {
+          return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        return '';
       }
     });
   </script>
