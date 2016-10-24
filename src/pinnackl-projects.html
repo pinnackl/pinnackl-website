@@ -133,7 +133,6 @@
 											label="Github name"
 											value="{{editData.github}}"></paper-input>
 									</div>
-									<button type="button" on-tap="reset">RESET</button>
 								</div>
 							</template>
 						</template>
@@ -341,7 +340,6 @@
 				this.$.projectDescription.innerHTML = description || '';
 
 				if (typeof description != 'undefined') {
-					console.log(this.projectData.description);
 					// Set edito value
 					this.set('editData', {
 						name: this.projectData.name || '',
