@@ -49,7 +49,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
 
         --app-grid-columns: 3;
-        --app-grid-item-height: 100px;
+        --app-grid-item-height: 30vh;
+        --app-grid-expandible-item-columns: 3;
       }
 
       app-header {
@@ -104,11 +105,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .end {
-        background-color: #f8f8f8;
+        background-color: #f8f8f8;        
       }
 
       .footer {
-        height: 30vh;
+        min-height: 30vh;
+      }
+
+      .item:nth-child(4) {
+        @apply(--app-grid-expandible-item);
+        height: 24px;
       }
 
       .right {
@@ -147,8 +153,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         line-height: 24px;
       }
 
-      .circle {
+      .circle, .circle /deep/ img {
         border-radius: 50%;
+      }
+
+      @media (max-width: 799px) {
+        :host {
+          --app-grid-columns: 1;
+        }
       }
 
     </style>
@@ -191,9 +203,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" preload sizing="contain"></iron-image></a>
             <div main-title>[[_ucfirst(page)]]</div>
             <div class="login">
-              <span class="mobile">
+              <span class="mobile" hidden$="[[queryMatches]]">
                 <paper-menu-button horizontal-align="right">
-                  <paper-icon-button src="{{user.photoURL}}" class="dropdown-trigger" hidden$="{{!user.email}}"></paper-icon-button>
+                  <paper-icon-button src="{{user.photoURL}}" class="dropdown-trigger circle" hidden$="{{!user.email}}"></paper-icon-button>
                   <paper-icon-button icon="face" class="dropdown-trigger" hidden$="{{user.email}}"></paper-icon-button>
                   <paper-menu class="dropdown-content">
                     <paper-item hidden$="{{!user.email}}">[[user.displayName]]</paper-item>
@@ -255,9 +267,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </li>
               </ul>
             </div>
+            <div class="item end right">Pinnackl@{{year}}</div>
           </div>
         </div>
-        <div class="end right">Pinnackl@{{year}}</div>
       </app-header-layout>
     </app-drawer-layout>
   </template>
