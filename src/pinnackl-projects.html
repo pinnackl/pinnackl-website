@@ -143,6 +143,7 @@
 							</template>
 						</template>
 						<polymer-tinymce id="editor"
+							base-url="[[origin]]/bower_components/tinymce"
 							hidden$="[[!editMode]]"
 							tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image" 
 							tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]'
@@ -190,6 +191,7 @@
 						</template>
 					</template>
 					<polymer-tinymce id="creator"
+						base-url="[[origin]]/bower_components/tinymce"
 						hidden$="[[!editMode]]"
 						tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image" 
 						tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]'
@@ -222,6 +224,11 @@
 
 				routeData: {
 					type: Object
+				},
+
+				subpage: {
+					type: String,
+					notify: true
 				},
 
 				data: {
@@ -276,6 +283,7 @@
 	     	],
 
 	     	ready: function () {
+	     		this.origin = window.location.origin;
 	     	},
 
 	     	checkRights: function (uid, profile) {
@@ -322,6 +330,7 @@
 
 			_routePageChanged: function (page) {
 				this.page = page || 'list';
+				this.subpage = this.page;
 				this.editData = {
 					name: null,
 					github: null,

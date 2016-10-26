@@ -50,6 +50,7 @@
 				</div>
 			</template>
 			<polymer-tinymce id="editor"
+				base-url="[[origin]]/bower_components/tinymce"
 				hidden$="[[!editMode]]"
 				tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image" 
 				tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]'
@@ -111,6 +112,7 @@
 	     	],
 
 	     	ready: function () {
+	     		this.origin = window.location.origin;
 	     	},
 
 	     	checkRights: function (uid, profile) {

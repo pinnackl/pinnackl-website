@@ -23,13 +23,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
-<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-storage-script.html">
+
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/github-project-card/github-project-card.html">
-<link rel="import" href="../bower_components/import-tinymce/import-tinymce.html">
-<link rel="import" href="../bower_components/polymer-tinymce/polymer-tinymce.html">
 <link rel="import" href="../bower_components/page-title/page-title.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
@@ -59,6 +63,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
+      }
+
+      :host(:not([subpage=detail])) .back-btn {
+        display: none;
+      }
+
+      :host([subpage=detail]) [drawer-toggle] {
+        display: none;
+      }
+
+      app-toolbar a {
+        color: #ffffff;
       }
 
       .logo::after {
@@ -200,6 +216,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <a class="back-btn" href="/[[page]]/list" tabindex="-1">
+              <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
+            </a>
             <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" alt="Pinnackl" preload sizing="contain"></iron-image></a>
             <div main-title>[[_ucfirst(page)]]</div>
             <div class="login">
@@ -235,7 +254,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="view404"
             role="main">
           <pinnackl-home name="home"></pinnackl-home>
-          <pinnackl-projects name="projects" route="{{subroute}}" user="{{user}}"></pinnackl-projects>
+          <pinnackl-projects name="projects" route="{{subroute}}" subpage="{{subpage}}" user="{{user}}"></pinnackl-projects>
           <pinnackl-about name="about" user="{{user}}"></pinnackl-about>
           <pinnackl-view404 name="view404"></pinnackl-view404>
         </iron-pages>
@@ -284,6 +303,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged'
+        },
+
+        subpage: {
+          type: String,
+          reflectToAttribute: true
         },
 
         year: {
