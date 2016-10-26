@@ -200,7 +200,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" preload sizing="contain"></iron-image></a>
+            <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" alt="Pinnackl" preload sizing="contain"></iron-image></a>
             <div main-title>[[_ucfirst(page)]]</div>
             <div class="login">
               <span class="mobile" hidden$="[[queryMatches]]">
@@ -219,6 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </paper-menu-button>
               </span>
               <span class="desktop" hidden$="[[!queryMatches]]">
+                <!-- FIXME: Try to load an undefined image at first -->
                 <span class="avatar" hidden$="{{!user.email}}"><img src="{{user.photoURL}}" alt=""></span>
                 <span>[[user.displayName]]</span>
                 <paper-button hidden$="{{user.email}}" on-tap="login">Login</paper-button>

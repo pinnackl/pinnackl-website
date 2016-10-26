@@ -5,7 +5,9 @@
     "src/pinnackl-home.html",
     "src/pinnackl-projects.html",
     "src/pinnackl-about.html",
-    "src/my-view404.html"
+    "src/pinnackl-view404.html",
+    "/images/pinnackl.svg",
+    "/images/pexels-photo-205323.png"
   ],
   "sourceGlobs": [
    "src/**/*",
