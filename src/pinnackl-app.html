@@ -20,8 +20,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+
 <link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
 
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
@@ -42,6 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <!-- Custom element -->
 <link rel="import" href="pinnackl-firebase.html">
+<link rel="import" href="pinnackl-icon.html">
 
 <dom-module id="pinnackl-app">
   <template>
@@ -55,6 +57,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-grid-columns: 3;
         --app-grid-item-height: 30vh;
         --app-grid-expandible-item-columns: 3;
+
+        --app-fullscreen-height: calc(100vh - 64px);
       }
 
       app-header {
@@ -95,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       iron-pages {
-        min-height: 90vh;
+        min-height: var(--app-fullscreen-height);
       }
 
       .drawer-list {
@@ -121,7 +125,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .end {
-        background-color: #f8f8f8;        
+        background-color: #303c42;
       }
 
       .footer {
@@ -133,12 +137,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 24px;
       }
 
-      .right {
+      .end.right {
         text-align: center;
         font-weight: bold;
         font-size: 12px;
         line-height: 24px;
-        color: #757575;
+        color: #ffffff;
+        background-color: #455a64;
       }
 
       .item .footer-cln-header {
@@ -153,7 +158,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .item li a {
-        color: #757575;
+        color: #ffffff;
         font-size: 12px;
         text-decoration: none;
         line-height: 24px;
@@ -211,21 +216,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-drawer>
 
       <!-- Main content -->
-      <app-header-layout>
+      <app-header-layout has-scrolling-region>
 
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <paper-icon-button icon="pinnackl:menu" drawer-toggle></paper-icon-button>
             <a class="back-btn" href="/[[page]]/list" tabindex="-1">
-              <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
+              <paper-icon-button icon="pinnackl:arrow-back" aria-label="Go back"></paper-icon-button>
             </a>
-            <a class="logo"href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" alt="Pinnackl" preload sizing="contain"></iron-image></a>
+            <a class="logo" href="/" title="Pinnackl"><iron-image class="logo" src="/images/pinnackl-white.svg" alt="Pinnackl" preload sizing="contain"></iron-image></a>
             <div main-title>[[_ucfirst(page)]]</div>
             <div class="login">
               <span class="mobile" hidden$="[[queryMatches]]">
                 <paper-menu-button horizontal-align="right">
                   <paper-icon-button src="{{user.photoURL}}" class="dropdown-trigger circle" hidden$="{{!user.email}}"></paper-icon-button>
-                  <paper-icon-button icon="face" class="dropdown-trigger" hidden$="{{user.email}}"></paper-icon-button>
+                  <paper-icon-button icon="pinnackl:face" class="dropdown-trigger" hidden$="{{user.email}}"></paper-icon-button>
                   <paper-menu class="dropdown-content">
                     <paper-item hidden$="{{!user.email}}">[[user.displayName]]</paper-item>
                     <paper-item hidden$="{{user.email}}">

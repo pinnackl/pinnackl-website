@@ -17,21 +17,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style include="shared-styles">
       :host {
         display: block;
+        position: relative;
+        min-height: var(--app-fullscreen-height);
+      }
+
+      .card {
+        height: var(--app-fullscreen-height);
+      }
+
+      .card.console {
+        background: #494441;
+        height: calc(100vh + 64px);
       }
 
       .image {
+        position: absolute;
         width: 100%;
-        height: 90vh;
+        height: var(--app-fullscreen-height);
         z-index: 1;
       }
 
       .filter {
         position: absolute;
-        top: 64px;
+        top: 0;
         left: 0;
         right: 0;
         width: 100%;
-        height: 90vh;
+        height: var(--app-fullscreen-height);
         background-color: rgba(0,0,0,0);
         background-image: -webkit-linear-gradient(rgba(0,0,0,0.1) 0%,rgba(0,0,0,.1) 75%,rgba(0,0,0,.1) 100%); 
         background-image: linear-gradient(rgba(0,0,0,0.1) 0%,rgba(0,0,0,.1) 75%,rgba(0,0,0,.1) 100%);
@@ -43,7 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: absolute;
         top: 1em;
         width: 70%;
-        height: 90vh;
+        height: calc(100vh - 100px);
         margin: 0 15%;
         z-index: 3;
       }
@@ -52,8 +64,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: inline-block;
         position: absolute;
         color: #ffffff;
-        top: 90vh;
-        right: 2em;
+        top: calc(90vh - 64px);
+        right: 1em;
         z-index: 3;
       }
 
@@ -93,6 +105,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </a>
       </span>
       <iron-image class="logo" src="/images/pinnackl.svg" fade preload sizing="contain"></iron-image>
+    </div>
+    <div class="card console">
+      plop
     </div>
   </template>
 
